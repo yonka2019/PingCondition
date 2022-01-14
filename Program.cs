@@ -47,6 +47,12 @@ internal class Program
     }
     private static void ExecuteCMD(string command)
     {
-        Process.Start("CMD.exe", command);
+        ProcessStartInfo cmd = new ProcessStartInfo("CMD.exe")
+        {
+            UseShellExecute = true,
+            Verb = "runas",
+            Arguments = command
+        };
+        Process.Start(cmd);
     }
 }
