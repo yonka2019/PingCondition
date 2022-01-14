@@ -1,15 +1,18 @@
-﻿using System;
-using System.Configuration;
+﻿using PingCondition;
+using System;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
 
 internal class Program
 {
-    private static readonly string host = ConfigurationManager.AppSettings["Host"];
+    private static readonly string host = Config.Host;
+    private static readonly string command = Config.Command;
+    private static readonly int delay = Config.Delay;
     private static void Main()
     {
         Ping ping = new Ping();
-        PingReply reply;
+        PingReply reply = null;
+
         if (host == null)
         {
             Console.WriteLine("[ERROR] Can't find configuration file");
@@ -19,7 +22,7 @@ internal class Program
 
             Environment.Exit(0);
         }
-        Console.WriteLine($"[HOST] |{host}|: Pinging...");
+        Console.WriteLine($"[HOST] |{host}|: Ping...");
 
         while (true)
         {
@@ -29,18 +32,21 @@ internal class Program
             }
             catch
             {
-                Shutdown();
+                ExecuteCMD(command);
                 return;
             }
-            if (reply.Status != IPStatus.Success)
+            finally
             {
-                Shutdown();
+                if (reply.Status != IPStatus.Success)
+                {
+                    ExecuteCMD(command);
+                }
             }
+            System.Threading.Thread.Sleep(delay * 1000);
         }
     }
-    private static void Shutdown()
+    private static void ExecuteCMD(string command)
     {
-        Console.WriteLine($"[ERROR] |{host}|: Shutting down...");
-        Process.Start("shutdown", "/s /t 0");  // Shutdowns PC
+        Process.Start("CMD.exe", command);
     }
 }
