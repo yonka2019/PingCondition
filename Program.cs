@@ -15,7 +15,7 @@ internal class Program
 
         if (host == null)
         {
-            Console.WriteLine("[ERROR] Can't find configuration file");
+            Console.WriteLine("[" + DateTime.Now + "] [ERROR] Can't find configuration file");
 
             Console.WriteLine("Press any button...");
             Console.ReadKey();
@@ -27,7 +27,7 @@ internal class Program
         {
             try
             {
-                Console.WriteLine($"[HOST] |{host}|: Ping...");
+                Console.WriteLine($"[{DateTime.Now}] [HOST] ({host}): Ping...");
                 reply = ping.Send(host);
             }
             catch
@@ -47,7 +47,7 @@ internal class Program
     }
     private static void ExecuteCMD(string command)
     {
-        Console.WriteLine($"[ERROR] |{host}|: Executing cmd command..");
+        Console.WriteLine($"[{DateTime.Now}] [ERROR] ({host}): Executing cmd command..");
 
         ProcessStartInfo cmd = new ProcessStartInfo("CMD.exe")
         {
