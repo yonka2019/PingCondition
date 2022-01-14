@@ -22,12 +22,12 @@ internal class Program
 
             Environment.Exit(0);
         }
-        Console.WriteLine($"[HOST] |{host}|: Ping...");
 
         while (true)
         {
             try
             {
+                Console.WriteLine($"[HOST] |{host}|: Ping...");
                 reply = ping.Send(host);
             }
             catch
@@ -42,11 +42,13 @@ internal class Program
                     ExecuteCMD(command);
                 }
             }
-            System.Threading.Thread.Sleep(delay * 1000);
+            System.Threading.Thread.Sleep(delay * 1000); // s * 1000 = ms 
         }
     }
     private static void ExecuteCMD(string command)
     {
+        Console.WriteLine($"[ERROR] |{host}|: Executing cmd command..");
+
         ProcessStartInfo cmd = new ProcessStartInfo("CMD.exe")
         {
             UseShellExecute = true,
