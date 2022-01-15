@@ -8,6 +8,7 @@ internal class Program
     private static readonly string host = Config.Host;
     private static readonly string command = Config.Command;
     private static readonly int delay = Config.Delay;
+    private static readonly int sleepTimeCmd = Config.SleepCmdTime;
     private static void Main()
     {
         Ping ping = new Ping();
@@ -27,13 +28,12 @@ internal class Program
         {
             try
             {
-                Console.WriteLine($"[{DateTime.Now}] [HOST] ({host}): Ping...");
+                Console.Write($"[{DateTime.Now}] [HOST] ({host}): Ping...");
                 reply = ping.Send(host);
             }
             catch
             {
                 ExecuteCMD(command);
-                return;
             }
             finally
             {
@@ -41,20 +41,39 @@ internal class Program
                 {
                     ExecuteCMD(command);
                 }
+                else if (reply.Status == IPStatus.Success)
+                {
+                    Console.WriteLine(" Success.");
+                }
             }
             System.Threading.Thread.Sleep(delay * 1000); // s * 1000 = ms 
         }
     }
-    private static void ExecuteCMD(string command)
+    private static void ExecuteCMD(string sCommands)
     {
-        Console.WriteLine($"[{DateTime.Now}] [ERROR] ({host}): Executing cmd command..");
-
-        ProcessStartInfo cmd = new ProcessStartInfo("CMD.exe")
+        Console.WriteLine();
+        string[] commands = sCommands.Split('|');
+        foreach(string command in commands)
         {
-            UseShellExecute = true,
-            Verb = "runas",
-            Arguments = command
-        };
-        Process.Start(cmd);
+            Console.WriteLine($"[{DateTime.Now}] [ERROR OCCURED] (CMD): {command}");
+
+            Process cmd = new Process();
+            cmd.StartInfo.FileName = "cmd.exe";
+            cmd.StartInfo.RedirectStandardInput = true;
+            cmd.StartInfo.RedirectStandardOutput = true;
+            cmd.StartInfo.CreateNoWindow = true;
+            cmd.StartInfo.UseShellExecute = false;
+            cmd.Start();
+
+            cmd.StandardInput.WriteLine(command);
+            cmd.StandardInput.Flush();
+            cmd.StandardInput.Close();
+            cmd.WaitForExit();
+            Console.WriteLine(cmd.StandardOutput.ReadToEnd());
+            cmd.Close();
+
+            System.Threading.Thread.Sleep(sleepTimeCmd); // ms
+        }
+        Environment.Exit(1);
     }
 }

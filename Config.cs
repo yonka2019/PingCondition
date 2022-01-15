@@ -22,9 +22,9 @@ namespace PingCondition
         {
             get
             {
-                if (int.TryParse(ConfigurationManager.AppSettings["DelayS"], out int _))
+                if (int.TryParse(ConfigurationManager.AppSettings["Delay"], out int _))
                 {
-                    return int.Parse(ConfigurationManager.AppSettings["DelayS"]); // all is ok (delay is number)
+                    return int.Parse(ConfigurationManager.AppSettings["Delay"]); // all is ok (delay is number)
                 }
                 else
                 {
@@ -33,5 +33,21 @@ namespace PingCondition
                 }
             }
         }
+        public static int SleepCmdTime
+        {
+            get
+            {
+                if (int.TryParse(ConfigurationManager.AppSettings["SleepTimeCMD"], out int _))
+                {
+                    return int.Parse(ConfigurationManager.AppSettings["SleepTimeCMD"]); // all is ok (delay is number)
+                }
+                else
+                {
+                    System.Console.WriteLine("[ERROR] Can't parse the given delay to int");
+                    return -1;
+                }
+            }
+        }
+
     }
 }
